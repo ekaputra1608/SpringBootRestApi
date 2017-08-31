@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="ts8au_pp_routes_customer" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <sequence description="" key="gov:apimgt/customsequences/in/ts8au_pp_token_exchange.xml"/>
+
+    <property expression="get-property('To')" name="uri.postfix" scope="default" type="STRING"/>
+    <log level="full"/>
+
+    <rewrite outProperty="uri.postfix">
+        <rewriterule>
+            <action fragment="path" type="replace" regex=".*/customer" value="/customer"/>
+        </rewriterule>
+
+        <rewriterule>
+            <condition>
+                <match regex=".*/billingAccounts" type="url"/>
+            </condition>
+            <action fragment="path" type="replace" regex=".*/customer" value="/customer/management/customer"/>
+            <!-- <action fragment="path" type="replace" regex="billingAccount" value="billingAccounts"/> -->
+        </rewriterule>
+
+        <rewriterule>
+            <condition>
+                <match regex=".*/bills" type="url"/>
+            </condition>
+            <action fragment="path" type="replace" regex=".*/customer" value="/customer/account"/>
+            <!-- <action fragment="path" type="replace" regex="bills" value="bills"/> -->
+        </rewriterule>
+
+        <rewriterule>
+            <condition>
+                <match regex=".*/payments" type="url"/>
+            </condition>
+            <action fragment="path" type="replace" regex=".*/customer" value="/customer/account"/>
+            <!-- <action fragment="path" type="replace" regex="payments" value="payments"/> -->
+            <action fragment="query" type="set"
+                    value="order=desc&amp;page=0&amp;search=&amp;size=15&amp;sort=paymentDate"/>
+        </rewriterule>
+
+        <rewriterule>
+            <condition>
+                <match regex=".*/statusHistory" type="url"/>
+            </condition>
+            <action fragment="path" type="replace" regex=".*/customer" value="/customer/account"/>
+            <action fragment="path" type="replace" regex="statusHistory" value="statusHistories"/>
+            <action fragment="query" type="set" value="size=999"/>
+        </rewriterule>
+
+    </rewrite>
+    <property expression="get-property('uri.postfix')" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+
+    <property name="url.gateway.customer" scope="default" type="STRING" value="/customer/1.0/customer"/>
+    <rewrite outProperty="uri.postfix">
+        <rewriterule>
+            <action fragment="path" type="replace" regex=".*/customer" xpath="get-property('url.gateway.customer')"/>
+        </rewriterule>
+    </rewrite>
+    <property expression="get-property('uri.postfix')" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+
+
+    <log level="custom">
+        <property name="uri.postfix" expression="get-property('uri.postfix')"/>
+        <property name="Host" expression="get-property('transport', 'Host')"/>
+        <property name="HTTP_METHOD" expression="get-property('axis2', 'HTTP_METHOD')"/>
+        <property name="Context" expression="get-property('To')"/>
+        <property name="Resource" expression="$axis2:REST_URL_POSTFIX"/>
+        <property name="Origin" expression="get-property('transport', 'Origin')"/>
+        <property name="Content-Type" expression="get-property('transport', 'Content-Type')"/>
+    </log>
+</sequence>
