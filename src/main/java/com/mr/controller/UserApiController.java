@@ -24,20 +24,14 @@ public class UserApiController {
     @Autowired
     private UserService userService; //Service which will do all data retrieval/manipulation work
 
-    // -------------------Retrieve All Users---------------------------------------------
-
     @GetMapping("/users")
     public ResponseEntity<List<User>> listAllUsers() {
         List<User> users = userService.findAllUsers();
         if (users.isEmpty()) {
             users = new ArrayList<>();
-            //return new ResponseEntity(HttpStatus.NO_CONTENT);
-            // You many decide to return HttpStatus.NOT_FOUND
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
-    // -------------------Retrieve Single User------------------------------------------
 
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
@@ -49,8 +43,6 @@ public class UserApiController {
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
-    // -------------------Create a User-------------------------------------------
 
     @PostMapping("/users")
     public ResponseEntity<?> createUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
@@ -68,8 +60,6 @@ public class UserApiController {
         
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
-
-    // ------------------- Update a User ------------------------------------------------
 
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
@@ -90,8 +80,6 @@ public class UserApiController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // ------------------- Delete a User-----------------------------------------
-
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         logger.info("Fetching & Deleting User with id {}", id);
@@ -104,8 +92,6 @@ public class UserApiController {
         userService.deleteUserById(id);
         return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
     }
-
-    // ------------------- Delete All Users-----------------------------
 
     @DeleteMapping("/users")
     public ResponseEntity<User> deleteAllUsers() {
