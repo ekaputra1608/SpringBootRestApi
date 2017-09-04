@@ -62,9 +62,11 @@ public class UserApiController {
         }
         userService.saveUser(user);
 
-        HttpHeaders headers = new HttpHeaders();
+        /*HttpHeaders headers = new HttpHeaders();
         headers.setLocation(ucBuilder.path("/api/user/{id}").buildAndExpand(user.getId()).toUri());
-        return new ResponseEntity<String>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<String>(headers, HttpStatus.CREATED);*/
+        
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     // ------------------- Update a User ------------------------------------------------

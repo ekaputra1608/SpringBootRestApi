@@ -6,8 +6,30 @@
 
     <rewrite outProperty="reroutes">
         <rewriterule>
+            <action fragment="path" type="replace" regex=".*/api/v1/users" value="api/v1/users"/>
             <action fragment="path" type="replace" regex=".*/customers" value="api/v1/users"/>
+
+            <action fragment="path" type="replace" regex=".*/billings" value="api/v1/billings"/>
+            <action fragment="path" regex=".*/cekTagihanPengguna/\d+/detail" type="replace" xpath="concat('api/v1/billings/user/',get-property('uri.var.userId'))" />
+
         </rewriterule>
+
+        <rewriterule>
+            <condition>
+                <match regex=".*/billingsUser/\d+" type="url"/>
+            </condition>
+            <action fragment="path" type="replace" regex=".*/billingsUser" value="api/v1/billings/user"/>
+        </rewriterule>
+
     </rewrite>
     <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('reroutes')"/>
+
+    <log level="custom">
+        <property name="reroutes" expression="get-property('reroutes')"/>
+        <property name="Host" expression="get-property('transport', 'Host')"/>
+        <property name="HTTP_METHOD" expression="get-property('axis2', 'HTTP_METHOD')"/>
+        <property name="Context" expression="get-property('To')"/>
+        <property name="Resource" expression="$axis2:REST_URL_POSTFIX"/>
+        <property name="Origin" expression="get-property('transport', 'Origin')"/>
+    </log>
 </sequence>
